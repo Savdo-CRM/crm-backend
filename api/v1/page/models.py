@@ -1,3 +1,49 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
-# Create your models here.
+from .enums import PageTypes
+from api.commons.abstracts import SameField
+from api.v1.company.models import Company
+from django.contrib.auth.models import (
+    AbstractBaseUser, 
+    PermissionsMixin
+)
+from api.v1.page.managers import (
+    PageManager,
+)
+
+
+class Page(SameField, AbstractBaseUser, PermissionsMixin):
+    phone = models.CharField(max_length=15, unique=True)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
+
+    city = models.CharField(max_length=40)
+    country = models.CharField(max_length=50)
+    page = models.CharField(max_length=22, choices=PageTypes.choices())
+    is_admin = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    objects = PageManager()
+
+    USERNAME_FIELD = 'phone'
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'company']
+
+    def __str__(self) -> str:
+        return f'{self.phone}'
+    
+    @property
+    def get_phone(self):
+        return self.phone.split('|')[-1]
+
+    def clean(self) -> None:
+        if self.page != 'admin' and not self.company:
+            raise ValidationError('User must be choose one company!!!')
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+
+
