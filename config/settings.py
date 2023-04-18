@@ -53,6 +53,7 @@ INSTALLED_APPS += [
 INSTALLED_APPS += [
     'api.v1.company',
     'api.v1.page',
+    'api.commons',
 ]
 
 
@@ -193,7 +194,7 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
-
+import datetime
 
 
 # LOGGING
@@ -206,7 +207,7 @@ LOGGING = {
             'style': '{',
         },
         'simple': {
-            'format': '{levelname} {message}',
+            'format': '{levelname} {message} {asctime}',
             'style': '{',
         },
     },
@@ -220,35 +221,31 @@ LOGGING = {
     #     },
     # },
     'handlers': {
-        'logfile': {
-            'level': 'INFO',
+        'error_log_file': {
+            'level': 'ERROR',
             # 'filters': ['require_debug_true'],
-            # 'class': 'logging.StreamHandler',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'logging.FileHandler',
             'formatter': 'simple',
-            'filename': "crm.log",
+            'filename': f"logs/errors/error.log",
         },
-        # 'mail_admins': {
-        #     'level': 'ERROR',
-        #     'class': 'django.utils.log.AdminEmailHandler',
-        #     'filters': ['special']
-        # }
+        'critical_log_file': {
+            'level': 'CRITICAL',
+            # 'filters': ['require_debug_true'],
+            'class': 'logging.FileHandler',
+            'formatter': 'simple',
+            'filename': f"logs/criticals/critical.log",
+        },
     },
     'loggers': {
         'django': {
-            'handlers': ['logfile'],
+            'handlers': ['error_log_file',],
             'propagate': True,
-            # 'level': 'INFO',
+            'level': 'ERROR',
         },
-        # 'django.request': {
-        #     'handlers': ['mail_admins'],
-        #     'level': 'ERROR',
-        #     'propagate': False,
-        # },
-        # 'myproject.custom': {
-        #     'handlers': ['console', 'mail_admins'],
-        #     'level': 'INFO',
-        #     'filters': ['special']
-        # }
+        'django.request': {
+            'handlers': ['critical_log_file'],
+            'level': 'CRITICAL',
+            'propagate': False,
+        },
     }
 }
