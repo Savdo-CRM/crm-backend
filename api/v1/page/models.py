@@ -19,8 +19,8 @@ class Page(SameField, AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=50)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
 
-    city = models.CharField(max_length=40)
-    country = models.CharField(max_length=50)
+    city = models.CharField(max_length=40, blank=True, null=True)
+    country = models.CharField(max_length=50, blank=True, null=True)
     page = models.CharField(max_length=22, choices=PageTypes.choices())
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -28,7 +28,7 @@ class Page(SameField, AbstractBaseUser, PermissionsMixin):
     objects = PageManager()
 
     USERNAME_FIELD = 'phone'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'company']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'company', 'page']
 
     def __str__(self) -> str:
         return f'{self.phone}'
