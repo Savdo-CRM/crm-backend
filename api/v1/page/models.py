@@ -15,8 +15,7 @@ from api.v1.page.managers import (
 
 class Page(SameField, AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=15, unique=True)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, blank=True, null=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
 
     city = models.CharField(max_length=40, blank=True, null=True)
@@ -28,7 +27,7 @@ class Page(SameField, AbstractBaseUser, PermissionsMixin):
     objects = PageManager()
 
     USERNAME_FIELD = 'phone'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'company', 'page']
+    REQUIRED_FIELDS = ['name', 'company', 'page']
 
     def __str__(self) -> str:
         return f'{self.phone}'
