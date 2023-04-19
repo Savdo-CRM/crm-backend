@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-
+from django.utils.functional import cached_property
 from .enums import PageTypes
 from api.commons.abstracts import SameField
 from api.v1.company.models import Company
@@ -33,7 +33,7 @@ class Page(SameField, AbstractBaseUser, PermissionsMixin):
     def __str__(self) -> str:
         return f'{self.phone}'
     
-    @property
+    @cached_property
     def get_phone(self):
         return self.phone.split('|')[-1]
 
